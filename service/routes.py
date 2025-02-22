@@ -25,6 +25,10 @@ def health():
 @app.route("/")
 def index():
     """Root URL response"""
+
+
+    app.logger.info("Request Index")
+
     return (
         jsonify(
             name="Account REST API Service",
@@ -69,13 +73,13 @@ def create_accounts():
 ######################################################################
 
 @app.route("/accounts/<int:account_id>", methods=["GET"])
-def read_account(id):
+def read_account(account_id):
     """
     Reads an Account
     This endpoint will read an Account based the account_id that is requested
     """
-    app.logger.info(f"Request to read an Account with id {id}")
-    account = Account.find(id)
+    app.logger.info(f"Request to read an Account with id {account_id}")
+    account = Account.find(account_id)
     return account.serialize(), status.HTTP_200_OK
 
 

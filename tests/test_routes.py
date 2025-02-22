@@ -125,17 +125,20 @@ class TestAccountService(TestCase):
 
     # ADD YOUR TEST CASES HERE ...
     def test_read_an_account (self):
-        """It should Create a new Account"""
+        """It should Read a single Account"""
 
-        logging.info(f"account created")
+        logging.info(f"Creating account .....")
         account = self._create_accounts(1)[0]
-
-
+        
         logging.info(f"account created {account}")
 
         """It should get 200_OK from the account"""
         response = self.client.get(f"/{BASE_URL}/{account.id}", content_type="application/json")
+
+        logging.info(f"account read {response}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        
         
         # Check the data is correct
         account_read = response.get_json()
