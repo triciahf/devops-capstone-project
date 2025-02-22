@@ -9,6 +9,9 @@ from service.models import Account
 from service.common import status  # HTTP Status Codes
 from . import app  # Import Flask application
 
+
+import logging
+
 ############################################################
 # Health Endpoint
 ############################################################
@@ -70,7 +73,7 @@ def list_accounts():
     List all accounts
     This endpoint will get return all the acccounts available in the system
     """
-    logger.debug("init")
+    logging.debug("init")
     accounts = Account.all()
 
     accounts_list = []
@@ -78,7 +81,7 @@ def list_accounts():
     for account in accounts:
         accounts_list.append(account.serialize())
 
-    logger.debug("end")
+    logging.debug("end")
 
     return jsonify(data=accounts_list), status.HTTP_200_OK
 
@@ -92,15 +95,15 @@ def get_accounts(account_id):
     Reads an Account
     This endpoint will read an Account based the account_id that is requested
     """
-    logger.debug("init")
+    logging.debug("init")
 
-    logger.info(f"account_id {account_id}")
+    logging.info(f"account_id {account_id}")
 
     account = Account.find(account_id)
     if not account:
         abort(status.HTTP_404_NOT_FOUND, f"Account with id [{account_id}] could not be found.")
 
-    logger.debug("end")
+    logging.debug("end")
     return account.serialize(), status.HTTP_200_OK
 
 
@@ -135,7 +138,17 @@ def update_accounts(account_id):
 # DELETE AN ACCOUNT
 ######################################################################
 
-# ... place you code here to DELETE an account ...
+@app.route("/accounts/<int:account_id>", methods=["DELETE"])
+def delete_adcount(account_id):
+    """
+    Deletes an account
+    """
+    app.logger.info("Request to Delete an Account ...")
+
+    account = Account.find(account_id)
+    if account:
+        account.delete()
+    return "", status.HTTP_204_NO_CONTENT
 
 
 ######################################################################

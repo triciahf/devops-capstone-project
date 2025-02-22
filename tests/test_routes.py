@@ -200,3 +200,26 @@ class TestAccountService(TestCase):
         self.assertEqual(len(data),5)
 
         logging.debug ("end")        
+
+
+    def test_delete_account_happy_path(self):
+        """Test to delete a account from the database - happy path"""
+
+        logging.debug ("init")
+        num_accounts=5
+        account = self._create_accounts(num_accounts)[0]
+
+        response_delete = self.client.delete(f"{BASE_URL}/{account.id}")
+
+        # DEBUG
+        logging.debug(f"response_delete: {response_delete}")
+
+        self.assertEqual(response_delete.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(response_delete.data), 0)
+        list_accounts_response = self.client.get(f"{BASE_URL}")
+        data = list_accounts_response.get_json()["data"]
+
+        self.assertEqual(len(data), num_accounts-1)
+
+
+        logging.debug ("end")
