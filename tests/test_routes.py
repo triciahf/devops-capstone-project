@@ -33,8 +33,6 @@ class TestAccountService(TestCase):
         app.config["DEBUG"] = False
         app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
 
-        # DEBUG
-        #app.logger.setLevel(logging.INFO)
         app.logger.setLevel(logging.CRITICAL)
 
         init_db(app)
@@ -183,5 +181,22 @@ class TestAccountService(TestCase):
         logging.debug ("init")
         update_account_response = self.client.put(f"{BASE_URL}/100", json={})
         self.assertEqual(update_account_response.status_code, status.HTTP_404_NOT_FOUND)
+
+        logging.debug ("end")        
+
+    def test_list_accounts_happy_path(self):
+        """Test list accounts - happy path"""
+
+        logging.debug ("init")
+        accounts = self._create_accounts(5)
+
+        list_accounts_response = self.client.get(f"{BASE_URL}")
+
+        logging.info(f"list_accounts_response: {list_accounts_response}")
+
+        self.assertEqual(list_accounts_response.status_code, status.HTTP_200_OK)
+
+        data = list_accounts_response.get_json()["data"]
+        self.assertEqual(len(data),5)
 
         logging.debug ("end")        
