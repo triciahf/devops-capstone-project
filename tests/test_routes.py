@@ -143,10 +143,12 @@ class TestAccountService(TestCase):
         self.assertEqual(account_read["email"], account.email)
         self.assertEqual(account_read["address"], account.address)
         self.assertEqual(account_read["phone_number"], account.phone_number)
-        self.assertEqual(account_read["date_joined"], str(account.date_joined))        
+        self.assertEqual(account_read["date_joined"], str(account.date_joined))     
+
+        logging.debug ("end")   
 
     def test_get_account_no_account(self):
-        """Test read account - happy path"""
+        """Test read account - error no account"""
 
         logging.debug ("init")
 
@@ -154,3 +156,32 @@ class TestAccountService(TestCase):
             f"{BASE_URL}/100", content_type="application/json"
         )
         self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
+
+        logging.debug ("end")
+
+
+    def test_update_account_happy_path(self):
+        """Test update account - happy path"""
+
+        logging.debug ("init")
+        account = self._create_accounts(1)[0]
+
+        get_response = self.client.get(f"{BASE_URL}/{account.id}")
+        self.assertEqual(get_response.status_code, status.HTTP_200_OK)
+
+        account_found = get_response.get_json()
+        new_name = f"{account.name}mod"
+        account_found["name"] = new_name
+        update_account_response = self.client.put(f"{BASE_URL}/{account.id}", json=account_found)
+        self.assertEqual(update_account_response.status_code, status.HTTP_200_OK)
+
+        logging.debug ("end")
+
+    def test_update_account_no_account(self):
+        """Test update account - error - no account"""
+
+        logging.debug ("init")
+        update_account_response = self.client.put(f"{BASE_URL}/100", json={})
+        self.assertEqual(update_account_response.status_code, status.HTTP_404_NOT_FOUND)
+
+        logging.debug ("end")        
