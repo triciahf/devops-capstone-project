@@ -10,6 +10,10 @@ from service.common import status  # HTTP Status Codes
 from . import app  # Import Flask application
 
 
+# DEBUG
+import logging
+logger = logging.getLogger("flask.app")
+
 ############################################################
 # Health Endpoint
 ############################################################
@@ -25,6 +29,10 @@ def health():
 @app.route("/")
 def index():
     """Root URL response"""
+
+
+    app.logger.info("Request Index")
+
     return (
         jsonify(
             name="Account REST API Service",
@@ -67,8 +75,19 @@ def create_accounts():
 ######################################################################
 # READ AN ACCOUNT
 ######################################################################
+@app.route("/accounts/<int:account_id>", methods=["GET"])
+def get_accounts(account_id):
+    """
+    Reads an Account
+    This endpoint will read an Account based the account_id that is requested
+    """
+    logger.info(f"get_accounts {account_id}")
 
-# ... place you code here to READ an account ...
+    account = Account.find(account_id)
+    if not account:
+        abort(status.HTTP_404_NOT_FOUND, f"Account with id [{account_id}] could not be found.")
+
+    return account.serialize(), status.HTTP_200_OK
 
 
 ######################################################################

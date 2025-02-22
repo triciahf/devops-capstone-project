@@ -32,7 +32,11 @@ class TestAccountService(TestCase):
         app.config["TESTING"] = True
         app.config["DEBUG"] = False
         app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
+
+        # DEBUG
+        #app.logger.setLevel(logging.INFO)
         app.logger.setLevel(logging.CRITICAL)
+
         init_db(app)
 
     @classmethod
@@ -123,4 +127,30 @@ class TestAccountService(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
-    # ADD YOUR TEST CASES HERE ...
+    def test_get_account_happy_path(self):
+        """Test read account - happy path"""
+
+        logging.debug ("init")
+        account = self._create_accounts(1)[0]
+        get_response = self.client.get(
+            f"{BASE_URL}/{account.id}", content_type="application/json"
+        )
+        self.assertEqual(get_response.status_code, status.HTTP_200_OK)
+
+        # Check the data is correct
+        account_read = get_response.get_json()
+        self.assertEqual(account_read["name"], account.name)
+        self.assertEqual(account_read["email"], account.email)
+        self.assertEqual(account_read["address"], account.address)
+        self.assertEqual(account_read["phone_number"], account.phone_number)
+        self.assertEqual(account_read["date_joined"], str(account.date_joined))        
+
+    def test_get_account_no_account(self):
+        """Test read account - happy path"""
+
+        logging.debug ("init")
+
+        get_response = self.client.get(
+            f"{BASE_URL}/100", content_type="application/json"
+        )
+        self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
