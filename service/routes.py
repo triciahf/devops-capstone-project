@@ -9,11 +9,6 @@ from service.models import Account
 from service.common import status  # HTTP Status Codes
 from . import app  # Import Flask application
 
-
-# DEBUG
-import logging
-logger = logging.getLogger("flask.app")
-
 ############################################################
 # Health Endpoint
 ############################################################
@@ -69,7 +64,23 @@ def create_accounts():
 # LIST ALL ACCOUNTS
 ######################################################################
 
-# ... place you code here to LIST accounts ...
+@app.route("/accounts", methods=["GET"])
+def list_accounts():
+    """
+    List all accounts
+    This endpoint will get return all the acccounts available in the system
+    """
+    logger.debug("init")
+    accounts = Account.all()
+
+    accounts_list = []
+
+    for account in accounts:
+        accounts_list.append(account.serialize())
+
+    logger.debug("end")
+
+    return jsonify(data=accounts_list), status.HTTP_200_OK
 
 
 ######################################################################
