@@ -10,6 +10,10 @@ from service.common import status  # HTTP Status Codes
 from . import app  # Import Flask application
 
 
+# DEBUG
+import logging
+logger = logging.getLogger("flask.app")
+
 ############################################################
 # Health Endpoint
 ############################################################
@@ -77,7 +81,7 @@ def get_accounts(account_id):
     Reads an Account
     This endpoint will read an Account based the account_id that is requested
     """
-    app.logger.info("Request to read an Account with id: %s", account_id)
+    logger.info(f"get_accounts {account_id}")
 
     account = Account.find(account_id)
     if not account:
