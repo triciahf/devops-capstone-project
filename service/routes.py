@@ -8,9 +8,8 @@ from flask import jsonify, request, make_response, abort, url_for   # noqa; F401
 from service.models import Account
 from service.common import status  # HTTP Status Codes
 from . import app  # Import Flask application
-
-
 import logging
+
 
 ############################################################
 # Health Endpoint
@@ -27,7 +26,6 @@ def health():
 @app.route("/")
 def index():
     """Root URL response"""
-
 
     app.logger.info("Request Index")
 
@@ -66,6 +64,7 @@ def create_accounts():
 ######################################################################
 # LIST ALL ACCOUNTS
 ######################################################################
+
 
 @app.route("/accounts", methods=["GET"])
 def list_accounts():
@@ -106,10 +105,10 @@ def get_accounts(account_id):
     logging.debug("end")
     return account.serialize(), status.HTTP_200_OK
 
-
 ######################################################################
 # UPDATE AN EXISTING ACCOUNT
 ######################################################################
+
 
 @app.route("/accounts/<int:account_id>", methods=["PUT"])
 def update_accounts(account_id):
@@ -119,18 +118,17 @@ def update_accounts(account_id):
     """
 
     logging.debug("init")
-
     logging.info(f"account_id: {account_id}")
 
     account = Account.find(account_id)
-   
+
     if not account:
         abort(status.HTTP_404_NOT_FOUND, f"Account with id [{account_id}] could not be found.")
 
     data = request.get_json()
     account_deserializable = account.deserialize(data)
     account_deserializable.update()
-    logging.debug("end")    
+    logging.debug("end")
     return account_deserializable.serialize(), status.HTTP_200_OK
 
 
