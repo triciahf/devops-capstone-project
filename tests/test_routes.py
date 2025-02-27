@@ -54,11 +54,10 @@ class TestAccountService(TestCase):
     def tearDown(self):
         """Runs once after each test case"""
         db.session.remove()
-
-
     ######################################################################
     #  H E L P E R   M E T H O D S
     ######################################################################
+
     def _create_accounts(self, count):
         """Factory method to create accounts in bulk"""
         accounts = []
@@ -133,9 +132,7 @@ class TestAccountService(TestCase):
 
         logging.debug ("init")
         account = self._create_accounts(1)[0]
-        get_response = self.client.get(
-            f"{BASE_URL}/{account.id}", content_type="application/json"
-        )
+        get_response = self.client.get(f"{BASE_URL}/{account.id}", content_type="application/json")
         self.assertEqual(get_response.status_code, status.HTTP_200_OK)
 
         # Check the data is correct
@@ -153,9 +150,7 @@ class TestAccountService(TestCase):
 
         logging.debug ("init")
 
-        get_response = self.client.get(
-            f"{BASE_URL}/100", content_type="application/json"
-        )
+        get_response = self.client.get(f"{BASE_URL}/100", content_type="application/json")
         self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
 
         logging.debug ("end")
