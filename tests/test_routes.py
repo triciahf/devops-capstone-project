@@ -186,9 +186,10 @@ class TestAccountService(TestCase):
 
         logging.debug("init")
 
+        self._create_accounts(5)
         list_accounts_response = self.client.get(f"{BASE_URL}")
 
-        logging.info(f"list_accounts_response: {list_accounts_response}")
+        logging.info(f"list_accounts_response: {list_accounts_response.get_json()}")
 
         self.assertEqual(list_accounts_response.status_code, status.HTTP_200_OK)
 
