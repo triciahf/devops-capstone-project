@@ -38,5 +38,10 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: postgresql
-                key: database-user                     
+                key: database-user 
+      template:
+        spec:
+          containers:
+          - image: IMAGE_NAME_HERE
+            name: accounts                                    
 status: {}
