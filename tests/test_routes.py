@@ -130,7 +130,7 @@ class TestAccountService(TestCase):
     def test_get_account_happy_path(self):
         """Test read account - happy path"""
 
-        logging.debug ("init")
+        logging.debug("init")
         account = self._create_accounts(1)[0]
         get_response = self.client.get(f"{BASE_URL}/{account.id}", content_type="application/json")
         self.assertEqual(get_response.status_code, status.HTTP_200_OK)
@@ -141,25 +141,24 @@ class TestAccountService(TestCase):
         self.assertEqual(account_read["email"], account.email)
         self.assertEqual(account_read["address"], account.address)
         self.assertEqual(account_read["phone_number"], account.phone_number)
-        self.assertEqual(account_read["date_joined"], str(account.date_joined))     
+        self.assertEqual(account_read["date_joined"], str(account.date_joined))
 
-        logging.debug ("end")   
+        logging.debug("end")
 
     def test_get_account_no_account(self):
         """Test read account - error no account"""
 
-        logging.debug ("init")
+        logging.debug("init")
 
         get_response = self.client.get(f"{BASE_URL}/100", content_type="application/json")
         self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
 
-        logging.debug ("end")
-
+        logging.debug("end")
 
     def test_update_account_happy_path(self):
         """Test update account - happy path"""
 
-        logging.debug ("init")
+        logging.debug("init")
         account = self._create_accounts(1)[0]
 
         get_response = self.client.get(f"{BASE_URL}/{account.id}")
@@ -171,40 +170,39 @@ class TestAccountService(TestCase):
         update_account_response = self.client.put(f"{BASE_URL}/{account.id}", json=account_found)
         self.assertEqual(update_account_response.status_code, status.HTTP_200_OK)
 
-        logging.debug ("end")
+        logging.debug("end")
 
     def test_update_account_no_account(self):
         """Test update account - error - no account"""
 
-        logging.debug ("init")
+        logging.debug("init")
         update_account_response = self.client.put(f"{BASE_URL}/100", json={})
         self.assertEqual(update_account_response.status_code, status.HTTP_404_NOT_FOUND)
 
-        logging.debug ("end")        
+        logging.debug("end")
 
     def test_list_accounts_happy_path(self):
         """Test list accounts - happy path"""
 
-        logging.debug ("init")
-        accounts = self._create_accounts(5)
+        logging.debug("init")
 
+        self._create_accounts(5)
         list_accounts_response = self.client.get(f"{BASE_URL}")
 
-        logging.info(f"list_accounts_response: {list_accounts_response}")
+        logging.info(f"list_accounts_response: {list_accounts_response.get_json()}")
 
         self.assertEqual(list_accounts_response.status_code, status.HTTP_200_OK)
 
         data = list_accounts_response.get_json()["data"]
-        self.assertEqual(len(data),5)
+        self.assertEqual(len(data), 5)
 
-        logging.debug ("end")        
-
+        logging.debug("end")
 
     def test_delete_account_happy_path(self):
         """Test to delete a account from the database - happy path"""
 
-        logging.debug ("init")
-        num_accounts=5
+        logging.debug("init")
+        num_accounts = 5
         account = self._create_accounts(num_accounts)[0]
 
         response_delete = self.client.delete(f"{BASE_URL}/{account.id}")
@@ -219,12 +217,11 @@ class TestAccountService(TestCase):
 
         self.assertEqual(len(data), num_accounts-1)
 
-
-        logging.debug ("end")
+        logging.debug("end")
 
     def test_root_https(self):
         """test root with htpps - happy path"""
-        
+
         response = self.client.get("/", environ_overrides=HTTPS_ENVIRON)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -232,14 +229,11 @@ class TestAccountService(TestCase):
         self.assertEqual(response.headers.get("X-Content-Type-Options"), "nosniff")
         self.assertEqual(response.headers.get("Content-Security-Policy"), "default-src \'self\'; object-src \'none\'")
         self.assertEqual(response.headers.get("Referrer-Policy"), "strict-origin-when-cross-origin")
-        
+
     def test_root_https_access_control_allow_origin(self):
         """test root with htpps - Access-Control-Allow-Origin"""
-        
+
         response = self.client.get("/", environ_overrides=HTTPS_ENVIRON)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.headers.get("Access-Control-Allow-Origin"), "*")
-                
-
-        
